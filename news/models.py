@@ -16,5 +16,17 @@ class News(models.Model):
         return f'{self.name} - {self.date}'
 
 
+class Category(models.Model):
+
+    class Meta:
+        verbose_name = 'категория'
+        verbose_name_plural = 'категории'
+
+    name = models.CharField(verbose_name='название категории', max_length=50)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
 
 # Create your models here.
