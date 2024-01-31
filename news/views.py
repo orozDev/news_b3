@@ -11,4 +11,9 @@ def list_news(request):
 def main(request):
     return render(request, 'index.html')
 
+
+def detail_news(request, id):
+    news = News.objects.get(id=id)
+    return render(request, 'detail_news.html', {'news': news})
+
 # Create your views here.
