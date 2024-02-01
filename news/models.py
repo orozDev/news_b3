@@ -8,6 +8,7 @@ class News(models.Model):
         verbose_name_plural = 'новости'
 
     name = models.CharField(verbose_name='заголовок', max_length=100)
+    image = models.ImageField(verbose_name='изображение', upload_to='news_images/', blank=True, null=True)
     description = models.CharField(verbose_name='краткое описание', max_length=200)
     content = models.TextField(verbose_name='контент')
     date = models.DateTimeField(verbose_name='дата добавленения')
