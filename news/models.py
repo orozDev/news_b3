@@ -12,9 +12,10 @@ class News(models.Model):
     description = models.CharField(verbose_name='краткое описание', max_length=200)
     content = models.TextField(verbose_name='контент')
     date = models.DateTimeField(verbose_name='дата добавленения')
+    category = models.ForeignKey('news.Category', on_delete=models.PROTECT, related_name='news', verbose_name='категория')
 
     def __str__(self):
-        return f'{self.name} - {self.date}'
+        return f'{self.id}: {self.name} - {self.date}'
 
 
 class Category(models.Model):
@@ -26,7 +27,7 @@ class Category(models.Model):
     name = models.CharField(verbose_name='название категории', max_length=50)
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.id}: {self.name}'
 
 
 
