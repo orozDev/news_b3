@@ -52,4 +52,18 @@ class Tag(models.Model):
         return f'{self.id}: {self.name}'
 
 
+class AdditionalInfo(models.Model):
+
+    class Meta:
+        verbose_name = 'доп. информация'
+        verbose_name_plural = 'доп. информации'
+
+    source = models.CharField(verbose_name='источник', max_length=255)
+    image = models.ImageField(verbose_name='изображение', upload_to='news_add_info_images/', null=True, blank=True)
+    link = models.URLField(verbose_name='ссылка', null=True, blank=True)
+    news = models.OneToOneField('news.News', on_delete=models.CASCADE, related_name='info', verbose_name='новость')
+
+    def __str__(self):
+        return f'{self.news} - {self.source}'
+
 # Create your models here.
