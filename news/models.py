@@ -37,7 +37,7 @@ class Category(models.Model):
     name = models.CharField(verbose_name='название категории', max_length=50, unique=True)
 
     def __str__(self):
-        return f'{self.id}: {self.name}'
+        return f'{self.name}'
 
 
 class Tag(models.Model):
