@@ -4,6 +4,11 @@ from django.utils.safestring import mark_safe
 from news.models import News, Category, Tag, AdditionalInfo
 
 
+class AdditionalInfoStackedInline(admin.StackedInline):
+    model = AdditionalInfo
+    extra = 0
+
+
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'date', 'category', 'get_image')
@@ -13,6 +18,8 @@ class NewsAdmin(admin.ModelAdmin):
     readonly_fields = ('get_full_image',)
     # filter_vertical = ('tags',)
     filter_horizontal = ('tags',)
+    inlines = (AdditionalInfoStackedInline,)
+
     # raw_id_fields = ('category', 'tags')
 
     @admin.display(description='Изображение')
@@ -28,11 +35,16 @@ class NewsAdmin(admin.ModelAdmin):
         return None
 
 
+class NewsStackedInline(admin.StackedInline):
+    model = News
+
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     list_display_links = ('id', 'name')
     search_fields = ('name',)
+    inlines = (NewsStackedInline,)
 
 
 @admin.register(Tag)
@@ -41,8 +53,6 @@ class TagAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'name')
     search_fields = ('name',)
 
-
-admin.site.register(AdditionalInfo)
-
+# admin.site.register(AdditionalInfo)
 
 # Register your models here.
