@@ -26,8 +26,15 @@
                     <a class="nav-link" href="{% url 'list_news' %}">News</a>
                 </li>
             </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" action="{% url 'list_news' %}" method="get">
+                <select class="btn btn-outline-success" name="category" id="category">
+                    <option value="">All categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <input class="form-control me-2" placeholder="Search" aria-label="Search" type="text" name="search" id="search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
