@@ -25,23 +25,22 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'list_news' %}">News</a>
                 </li>
+                {% for category_item in categories %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'list_news_by_category' id=category_item.id %}">{{ category_item.name }}</a>
+                    </li>
+                {% endfor %}
             </ul>
-            <form class="d-flex" action="{% url 'list_news' %}" method="get">
-                <select class="btn btn-outline-success" name="category" id="category">
-                    <option value="">All categories</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <input class="form-control me-2" placeholder="Search" aria-label="Search" type="text" name="search" id="search">
+            <form class="d-flex" method="get">
+                <input class="form-control me-2" placeholder="Search" aria-label="Search" type="text" name="search"
+                       id="search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
     </div>
 </nav>
 <div class="container">
-    <h1 class="mb-4">Hello World</h1>
+    <h1 class="mb-4">List news {% if category is not None %}by {{ category.name }}{% endif %}</h1>
     <div class="row">
         {% for item in news %}
             <div class="col-3">

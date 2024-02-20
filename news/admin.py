@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from news.models import News, Category, Tag, AdditionalInfo
 
 
-class AdditionalInfoStackedInline(admin.StackedInline):
+class AdditionalInfoTabularInline(admin.TabularInline):
     model = AdditionalInfo
     extra = 0
 
@@ -18,7 +18,7 @@ class NewsAdmin(admin.ModelAdmin):
     readonly_fields = ('get_full_image',)
     # filter_vertical = ('tags',)
     filter_horizontal = ('tags',)
-    inlines = (AdditionalInfoStackedInline,)
+    inlines = (AdditionalInfoTabularInline,)
 
     # raw_id_fields = ('category', 'tags')
 
