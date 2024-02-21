@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление новости</title>
+    <link rel="stylesheet" href="{% static 'css/create.css' %}">
+</head>
+<body>
+    <h1>Добавление новости</h1>
+    
+    <form method="post" action="{% url 'create-news' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">Название новости:</label>
+        <input type="text" id="name" name="name" maxlength="100" required>
+        <br>
+        
+        <label for="description">Краткое описание:</label>
+        <input type="text" id="description" name="description" maxlength="200" required>
+        <br>
+        
+        <label for="content">Контент:</label>
+        <textarea id="content" name="content" required></textarea>
+        <br>
+        
+        <label for="date">Дата добавления:</label>
+        <input type="date" id="date" name="date" required>
+        <br>
+        
+        <label for="category">Категория:</label>
+        <select id="category" name="category" required>
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        
+        <label for="tags">Теги:</label>
+        <select multiple id="tags" name="tags">
+            {% for tag in tags %}
+                <option value="{{ tag.id }}">{{ tag.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        
+        <label for="image">Изображение:</label>
+        <input type="file" id="image" name="image">
+        <br>
+        
+        <button type="submit">Добавить новость</button>
+    </form>
+</body>
+</html>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from news.models import News, Category
+from news.models import News, Category,Tag
 
 
 def list_news(request):
@@ -43,3 +43,40 @@ def detail_news(request, id):
     return render(request, 'detail_news.html', {'news': news})
 
 # Create your views here.
+
+def create_news(request):
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        content = request.POST.get('content')
+        date = request.POST.get('date')
+        category_id = request.POST.get('category')
+        tags = request.POST.getlist('tags')
+        
+        if category_id:
+            news = News.objects.create(
+                name=name,
+                description=description,
+                content=content,
+                date=date,
+                category_id=category_id
+            ) 
+        
+        if tags:
+                news.tags.add(*tags)
+        
+        image = request.FILES.get('image')
+       
+        if image:
+                news.image = image
+                news.save()            
+        
+        return redirect('list_news')
+
+    return render(request, 'create_news.html',{
+        'categories':categories,
+        'tags':tags
+        })
