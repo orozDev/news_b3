@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
 from news.models import News, Category,Tag
+from django.http import HttpResponseForbidden
 
 
 def list_news(request):
@@ -80,3 +81,49 @@ def create_news(request):
         'categories':categories,
         'tags':tags
         })
+
+def update_news(request, id):
+    news_object = get_object_or_404(News, id=id)
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        content = request.POST.get('content')
+        date = request.POST.get('date')
+        category_id = request.POST.get('category')
+        tags = request.POST.getlist('tags')
+        image = request.FILES.get('image')
+
+        news_object.name = name
+        news_object.description = description
+        news_object.content = content
+        news_object.date = date
+        news_object.category_id = category_id
+        if image: 
+            news_object.image = image
+        news_object.save()
+
+        news_object.tags.clear()
+        news_object.tags.add(*tags)
+
+        return redirect('list_news')
+
+    else:
+        return render(request, 'update_news.html', {
+            'news': news_object,
+            'categories': categories,
+            'tags':tags
+             })
+
+def delete_news(request, id):
+    news_object = get_object_or_404(News, id=id)
+
+    news_object.delete()
+
+    return redirect('list_news')
+
+
+
+

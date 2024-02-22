@@ -59,6 +59,8 @@
                         </h6>
                         <p class="card-text">{{ item.description }}</p>
                         <a href="{% url 'detail_news' id=item.id %}" class="btn btn-primary">View</a>
+                        <a href="{% url 'update-news' id=item.id %}" style="background-color:green;" class="btn btn-primary">EDIT</a>
+                        <a href="{% url 'delete-news' id=item.id %}" style="background-color:red;" class="btn btn-primary">DEL</a>
                     </div>
                 </div>
             </div>
