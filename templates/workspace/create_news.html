@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}| Create News{% endblock title %}
+
+{% block content %}
+    <form method="post" action="{% url 'create-news' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="name">Название новости:</label>
+            <input class="form-control" type="text" id="name" name="name" maxlength="100"
+                   required>
+        </div>
+
+        <div class="mb-4">
+            <label for="description">Краткое описание:</label>
+            <input class="form-control" type="text" id="description" name="description"
+                   maxlength="200" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="content">Контент:</label>
+            <textarea id="content" name="content" class="form-control" required>{{ news.content }}</textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="date">Дата добавления:</label>
+            <input class="form-control" type="date" id="date" name="date" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="category">Категория:</label>
+            <select id="category" name="category" class="form-select" required>
+                <option disabled selected>Select category</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == news.category_id %}
+                            selected {% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="tags">Теги:{% for tag_ in news.tags.all %}{{ tag_.name }}{% endfor %}</label>
+            <select multiple id="tags" class="form-select" name="tags">
+                {% for tag in tags %}
+                    <option value="{{ tag.id }}">{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="image">Изображение:</label>
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
+
+        <button class="btn btn-success w-100" type="submit">Сохранить</button>
+    </form>
+{% endblock content %}

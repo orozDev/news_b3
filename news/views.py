@@ -1,7 +1,6 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
-from news.models import News, Category,Tag
-from django.http import HttpResponseForbidden
+from news.models import News, Category
 
 
 def list_news(request):
@@ -16,7 +15,8 @@ def list_news(request):
 
 
 def main(request):
-    return render(request, 'index.html')
+    categories = Category.objects.all()
+    return render(request, 'index.html', {'categories': categories})
 
 
 def list_news_by_category(request, id):
@@ -44,86 +44,3 @@ def detail_news(request, id):
     return render(request, 'detail_news.html', {'news': news})
 
 # Create your views here.
-
-def create_news(request):
-    categories = Category.objects.all()
-    tags = Tag.objects.all()
-    
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        content = request.POST.get('content')
-        date = request.POST.get('date')
-        category_id = request.POST.get('category')
-        tags = request.POST.getlist('tags')
-        
-        if category_id:
-            news = News.objects.create(
-                name=name,
-                description=description,
-                content=content,
-                date=date,
-                category_id=category_id
-            ) 
-        
-        if tags:
-                news.tags.add(*tags)
-        
-        image = request.FILES.get('image')
-       
-        if image:
-                news.image = image
-                news.save()            
-        
-        return redirect('list_news')
-
-    return render(request, 'create_news.html',{
-        'categories':categories,
-        'tags':tags
-        })
-
-def update_news(request, id):
-    news_object = get_object_or_404(News, id=id)
-    categories = Category.objects.all()
-    tags = Tag.objects.all()
-
-    if request.method == "POST":
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        content = request.POST.get('content')
-        date = request.POST.get('date')
-        category_id = request.POST.get('category')
-        tags = request.POST.getlist('tags')
-        image = request.FILES.get('image')
-
-        news_object.name = name
-        news_object.description = description
-        news_object.content = content
-        news_object.date = date
-        news_object.category_id = category_id
-        if image: 
-            news_object.image = image
-        news_object.save()
-
-        news_object.tags.clear()
-        news_object.tags.add(*tags)
-
-        return redirect('list_news')
-
-    else:
-        return render(request, 'update_news.html', {
-            'news': news_object,
-            'categories': categories,
-            'tags':tags
-             })
-
-def delete_news(request, id):
-    news_object = get_object_or_404(News, id=id)
-
-    news_object.delete()
-
-    return redirect('list_news')
-
-
-
-
