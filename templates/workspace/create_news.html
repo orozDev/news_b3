@@ -3,7 +3,7 @@
 {% block title %}| Create News{% endblock title %}
 
 {% block content %}
-    <form method="post" action="{% url 'create-news' %}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'create_news' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-4">
             <label for="name">Название новости:</label>

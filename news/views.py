@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-
+from django.db.models import Q
 from news.models import News, Category
+from django.core.paginator import Paginator
 
 
 def list_news(request):
@@ -9,7 +10,15 @@ def list_news(request):
     search_query = request.GET.get('search')
 
     if search_query:
-        news = news.filter(name__icontains=search_query)
+        news = news.filter(
+            Q(description__icontains=search_query) |
+            Q(name__icontains=search_query) |
+            Q(content__icontains=search_query)
+        )
+
+    paginator = Paginator(news, 2)
+    page = int(request.GET.get('page', 1))
+    news = paginator.get_page(page)
 
     return render(request, 'list_news.html', {'news': news, 'categories': categories})
 
@@ -29,7 +38,11 @@ def list_news_by_category(request, id):
 
     search_query = request.GET.get('search')
     if search_query:
-        news = news.filter(name__icontains=search_query)
+        news = news.filter(
+            Q(description__icontains=search_query) |
+            Q(name__icontains=search_query) |
+            Q(content__icontains=search_query)
+        )
 
     categories = Category.objects.all()
     return render(request, 'list_news.html', {

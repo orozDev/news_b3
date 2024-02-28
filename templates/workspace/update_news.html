@@ -3,7 +3,7 @@
 {% block title %}| Update the news "{{ news.name }}"{% endblock title %}
 
 {% block content %}
-    <form method="post" action="{% url 'update-news' id=news.id %}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'update_news' id=news.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-4">
             <label for="name">Название новости:</label>
@@ -41,7 +41,11 @@
             <label for="tags">Теги:{% for tag_ in news.tags.all %}{{ tag_.name }}{% endfor %}</label>
             <select multiple id="tags" class="form-select" name="tags">
                 {% for tag in tags %}
-                    <option value="{{ tag.id }}">{{ tag.name }}</option>
+                    {% if tag in news.tags.all %}
+                        <option value="{{ tag.id }}" selected>{{ tag.name }}</option>
+                    {% else %}
+                        <option value="{{ tag.id }}">{{ tag.name }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </div>

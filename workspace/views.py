@@ -1,6 +1,22 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 
 from news.models import Category, Tag, News
+from django.contrib import messages
+
+
+def workspace(request):
+    news = News.objects.all()
+    categories = Category.objects.all()
+
+    search_query = request.GET.get('search')
+    if search_query:
+        news = news.filter(
+            Q(description__icontains=search_query) |
+            Q(name__icontains=search_query) |
+            Q(content__icontains=search_query)
+        )
+    return render(request, 'workspace/index.html', {'news': news, 'categories': categories})
 
 
 def create_news(request):
@@ -33,7 +49,9 @@ def create_news(request):
             news.image = image
             news.save()
 
-        return redirect('list_news')
+        messages.success(request, f'The news "{news.name}" has been created successfully.')
+
+        return redirect('/workspace/')
 
     return render(request, 'workspace/create_news.html', {
         'categories': categories,
@@ -67,20 +85,21 @@ def update_news(request, id):
         news_object.tags.clear()
         news_object.tags.add(*tags)
 
-        return redirect('list_news')
+        messages.success(request, f'The news "{news_object.name}" has been updated successfully.')
 
-    else:
-        return render(request, 'workspace/update_news.html', {
-            'news': news_object,
-            'categories': categories,
-            'tags': tags
-        })
+        return redirect('/workspace/')
+
+    return render(request, 'workspace/update_news.html', {
+        'news': news_object,
+        'categories': categories,
+        'tags': tags
+    })
 
 
 def delete_news(request, id):
     news_object = get_object_or_404(News, id=id)
     news_object.delete()
-
-    return redirect('list_news')
+    messages.warning(request, f'The news "{news_object.name}" has been deleted successfully.')
+    return redirect('/workspace/')
 
 # Create your views here.
