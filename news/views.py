@@ -6,7 +6,6 @@ from django.core.paginator import Paginator
 
 def list_news(request):
     news = News.objects.all()
-    categories = Category.objects.all()
     search_query = request.GET.get('search')
 
     if search_query:
@@ -20,12 +19,11 @@ def list_news(request):
     page = int(request.GET.get('page', 1))
     news = paginator.get_page(page)
 
-    return render(request, 'list_news.html', {'news': news, 'categories': categories})
+    return render(request, 'list_news.html', {'news': news})
 
 
 def main(request):
-    categories = Category.objects.all()
-    return render(request, 'index.html', {'categories': categories})
+    return render(request, 'index.html')
 
 
 def list_news_by_category(request, id):
@@ -44,10 +42,8 @@ def list_news_by_category(request, id):
             Q(content__icontains=search_query)
         )
 
-    categories = Category.objects.all()
     return render(request, 'list_news.html', {
         'news': news,
-        'categories': categories,
         'category': category
     })
 

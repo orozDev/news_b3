@@ -7,7 +7,6 @@ from django.contrib import messages
 
 def workspace(request):
     news = News.objects.all()
-    categories = Category.objects.all()
 
     search_query = request.GET.get('search')
     if search_query:
@@ -16,11 +15,10 @@ def workspace(request):
             Q(name__icontains=search_query) |
             Q(content__icontains=search_query)
         )
-    return render(request, 'workspace/index.html', {'news': news, 'categories': categories})
+    return render(request, 'workspace/index.html', {'news': news})
 
 
 def create_news(request):
-    categories = Category.objects.all()
     tags = Tag.objects.all()
 
     if request.method == 'POST':
@@ -54,7 +52,6 @@ def create_news(request):
         return redirect('/workspace/')
 
     return render(request, 'workspace/create_news.html', {
-        'categories': categories,
         'tags': tags
     })
 
