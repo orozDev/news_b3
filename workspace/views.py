@@ -1,12 +1,16 @@
+from pprint import pprint
+
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 
 from news.models import Category, Tag, News
 from django.contrib import messages
 
+from workspace.forms import NewsForm
+
 
 def workspace(request):
-    news = News.objects.all()
+    news = News.objects.all().order_by('-date')
 
     search_query = request.GET.get('search')
     if search_query:
@@ -18,41 +22,62 @@ def workspace(request):
     return render(request, 'workspace/index.html', {'news': news})
 
 
+# def create_news(request):
+#     tags = Tag.objects.all()
+#
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         description = request.POST.get('description')
+#         content = request.POST.get('content')
+#         date = request.POST.get('date')
+#         category_id = request.POST.get('category')
+#         tags = request.POST.getlist('tags')
+#
+#         if category_id:
+#             news = News.objects.create(
+#                 name=name,
+#                 description=description,
+#                 content=content,
+#                 date=date,
+#                 category_id=category_id
+#             )
+#
+#         if tags:
+#             news.tags.add(*tags)
+#
+#         image = request.FILES.get('image')
+#
+#         if image:
+#             news.image = image
+#             news.save()
+#
+#         messages.success(request, f'The news "{news.name}" has been created successfully.')
+#
+#         return redirect('/workspace/')
+#
+#     return render(request, 'workspace/create_news.html', {
+#         'tags': tags
+#     })
+
+
 def create_news(request):
-    tags = Tag.objects.all()
-
+    form = NewsForm()
     if request.method == 'POST':
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        content = request.POST.get('content')
-        date = request.POST.get('date')
-        category_id = request.POST.get('category')
-        tags = request.POST.getlist('tags')
+        form = NewsForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
 
-        if category_id:
-            news = News.objects.create(
-                name=name,
-                description=description,
-                content=content,
-                date=date,
-                category_id=category_id
-            )
+            image = form.cleaned_data.pop('image')
+            tags = form.cleaned_data.pop('tags')
 
-        if tags:
+            news = News.objects.create(**form.cleaned_data)
+            news.image.save(image.name, image)
             news.tags.add(*tags)
 
-        image = request.FILES.get('image')
-
-        if image:
-            news.image = image
-            news.save()
-
-        messages.success(request, f'The news "{news.name}" has been created successfully.')
-
-        return redirect('/workspace/')
+            messages.success(request, f'The news "{news.name}" has been created successfully.')
+            return redirect('/workspace/')
 
     return render(request, 'workspace/create_news.html', {
-        'tags': tags
+        'form': form
     })
 
 

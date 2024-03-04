@@ -11,7 +11,7 @@ class News(models.Model):
     image = models.ImageField(verbose_name='изображение', upload_to='news_images/', blank=True, null=True)
     description = models.CharField(verbose_name='краткое описание', max_length=200)
     content = models.TextField(verbose_name='контент')
-    date = models.DateTimeField(verbose_name='дата добавленения')
+    date = models.DateTimeField(verbose_name='дата добавленения', auto_now_add=True)
     category = models.ForeignKey('news.Category', on_delete=models.PROTECT, related_name='news', verbose_name='категория')
     tags = models.ManyToManyField('news.Tag', related_name='news', verbose_name='теги', blank=True)
 

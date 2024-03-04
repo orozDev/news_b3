@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 
 
 def list_news(request):
-    news = News.objects.all()
+    news = News.objects.all().order_by('-date')
     search_query = request.GET.get('search')
 
     if search_query:
@@ -32,7 +32,7 @@ def list_news_by_category(request, id):
     # except Category.DoesNotExist:
     #     return redirect('/news/')
     category = get_object_or_404(Category, id=id)
-    news = News.objects.filter(category=category)
+    news = News.objects.filter(category=category).order_by('-date')
 
     search_query = request.GET.get('search')
     if search_query:
