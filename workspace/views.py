@@ -1,11 +1,12 @@
 from pprint import pprint
-
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 
 from news.models import Category, Tag, News
 from django.contrib import messages
 
+from workspace.filters import NewsFilter
 from workspace.forms import NewsForm
 
 
@@ -19,7 +20,15 @@ def workspace(request):
             Q(name__icontains=search_query) |
             Q(content__icontains=search_query)
         )
-    return render(request, 'workspace/index.html', {'news': news})
+    filter_set = NewsFilter(queryset=news, data=request.GET)
+    news = filter_set.qs
+    form = filter_set.form
+
+    paginator = Paginator(news, 12)
+    page = int(request.GET.get('page', 1))
+    news = paginator.get_page(page)
+
+    return render(request, 'workspace/index.html', {'news': news, 'form': form})
 
 
 # def create_news(request):
@@ -125,7 +134,6 @@ def update_news(request, id):
         'news': news,
         'form': form
     })
-
 
 
 def delete_news(request, id):
