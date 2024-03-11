@@ -21,8 +21,8 @@ class NewsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'] = forms.ModelChoiceField(label='Категория', empty_label='Choose an item',
-                                                          queryset=Category.objects.all(),
-                                                          widget=forms.Select(attrs={'class': 'form-select'}))
+                                                         queryset=Category.objects.all(),
+                                                         widget=forms.Select(attrs={'class': 'form-select'}))
 
     class Meta:
         model = News
@@ -47,3 +47,10 @@ class NewsForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-select'}),
             'tags': forms.CheckboxSelectMultiple(),
         }
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Имя пользователя', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Имя пользователя'}))
+    password = forms.CharField(label='Пароль',
+                               widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}))

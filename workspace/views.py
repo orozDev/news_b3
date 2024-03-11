@@ -5,30 +5,68 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from news.models import Category, Tag, News
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
 from workspace.filters import NewsFilter
-from workspace.forms import NewsForm
+from workspace.forms import NewsForm, LoginForm
+
+
+def login_profile(request):
+    print('The view was called')
+    print(request.user)
+
+    if request.user.is_authenticated:
+        return redirect('/')
+
+    form = LoginForm()
+    message = None
+
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        username = form.data.get('username')
+        password = form.data.get('password')
+
+        user = authenticate(username=username, password=password)
+        print('User:', user)
+        if user:
+            login(request, user)
+            print(request.user, 'is logged in successfully!')
+            messages.success(request, f'The user has been logged in successfully!')
+            return redirect('/workspace/')
+
+        message = 'The password is not incorrect or user does not exist.'
+
+    return render(request, 'auth/login.html', {'form': form, 'message': message})
+
+
+def logout_profile(request):
+
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect('/')
 
 
 def workspace(request):
-    news = News.objects.all().order_by('-date')
+    if request.user.is_authenticated:
+        news = News.objects.all().order_by('-date')
 
-    search_query = request.GET.get('search')
-    if search_query:
-        news = news.filter(
-            Q(description__icontains=search_query) |
-            Q(name__icontains=search_query) |
-            Q(content__icontains=search_query)
-        )
-    filter_set = NewsFilter(queryset=news, data=request.GET)
-    news = filter_set.qs
-    form = filter_set.form
+        search_query = request.GET.get('search')
+        if search_query:
+            news = news.filter(
+                Q(description__icontains=search_query) |
+                Q(name__icontains=search_query) |
+                Q(content__icontains=search_query)
+            )
+        filter_set = NewsFilter(queryset=news, data=request.GET)
+        news = filter_set.qs
+        form = filter_set.form
 
-    paginator = Paginator(news, 12)
-    page = int(request.GET.get('page', 1))
-    news = paginator.get_page(page)
+        paginator = Paginator(news, 6)
+        page = int(request.GET.get('page', 1))
+        news = paginator.get_page(page)
 
-    return render(request, 'workspace/index.html', {'news': news, 'form': form})
+        return render(request, 'workspace/index.html', {'news': news, 'form': form})
+    return redirect('/')
 
 
 # def create_news(request):
@@ -72,6 +110,7 @@ def workspace(request):
 def create_news(request):
     form = NewsForm()
     if request.method == 'POST':
+
         form = NewsForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             news = form.save()

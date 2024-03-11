@@ -15,7 +15,7 @@ def list_news(request):
             Q(content__icontains=search_query)
         )
 
-    paginator = Paginator(news, 12)
+    paginator = Paginator(news, 6)
     page = int(request.GET.get('page', 1))
     news = paginator.get_page(page)
 
@@ -41,7 +41,7 @@ def list_news_by_category(request, id):
             Q(name__icontains=search_query) |
             Q(content__icontains=search_query)
         )
-    paginator = Paginator(news, 12)
+    paginator = Paginator(news, 6)
     page = int(request.GET.get('page', 1))
     news = paginator.get_page(page)
 
