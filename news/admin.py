@@ -11,7 +11,7 @@ class AdditionalInfoTabularInline(admin.TabularInline):
 
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'date', 'category', 'get_image')
+    list_display = ('id', 'name', 'date', 'category', 'author', 'get_image')
     list_display_links = ('id', 'name')
     list_filter = ('category', 'tags', 'date',)
     search_fields = ('name', 'content', 'date', 'description')

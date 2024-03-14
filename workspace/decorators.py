@@ -1,5 +1,7 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
+from django.contrib import messages
+from news.models import News
 
 
 def login_required(login_url=None):
@@ -15,4 +17,15 @@ def login_required(login_url=None):
         return inner
     return decorator
 
+
+def own_news(func):
+
+    def inner(request, id, *args, **kwargs):
+        news = get_object_or_404(News, id=id)
+        if news.author != request.user:
+            messages.warning(request, f'You cannot change this news ). You are not hacker)😈')
+            return redirect(reverse('workspace'))
+        return func(request, id, *args, **kwargs)
+
+    return inner
 

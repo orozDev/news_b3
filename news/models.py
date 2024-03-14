@@ -14,6 +14,7 @@ class News(models.Model):
     date = models.DateTimeField(verbose_name='дата добавленения', auto_now_add=True)
     category = models.ForeignKey('news.Category', on_delete=models.PROTECT, related_name='news', verbose_name='категория')
     tags = models.ManyToManyField('news.Tag', related_name='news', verbose_name='теги', blank=True)
+    author = models.ForeignKey('auth.User', models.CASCADE, verbose_name='автор')
 
     def __str__(self):
         return f'{self.id}: {self.name} - {self.date}'

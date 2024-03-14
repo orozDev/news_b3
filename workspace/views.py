@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import resolve, reverse
 from django.contrib.auth.decorators import login_required
 
+from workspace.decorators import own_news
 # from workspace.decorators import login_required
 from workspace.filters import NewsFilter
 from workspace.forms import NewsForm, LoginForm
@@ -23,7 +24,6 @@ def login_profile(request):
 
     if request.session.get('next') is None:
         request.session['next'] = request.GET.get('next', reverse('workspace'))
-
 
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
@@ -54,7 +54,7 @@ def logout_profile(request):
 
 @login_required(login_url='/workspace/login/')
 def workspace(request):
-    news = News.objects.all().order_by('-date')
+    news = News.objects.filter(author=request.user).order_by('-date')
 
     search_query = request.GET.get('search')
     if search_query:
@@ -119,14 +119,15 @@ def create_news(request):
 
         form = NewsForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            news = form.save()
+            news = form.save(commit=False)
+            news.author = request.user
+            news.save()
             messages.success(request, f'The news "{news.name}" has been created successfully.')
             return redirect('/workspace/')
 
     return render(request, 'workspace/create_news.html', {
         'form': form
     })
-
 
 # def update_news(request, id):
 #     news_object = get_object_or_404(News, id=id)
@@ -166,6 +167,7 @@ def create_news(request):
 
 
 @login_required(login_url='/workspace/login/')
+@own_news
 def update_news(request, id):
     news = get_object_or_404(News, id=id)
     form = NewsForm(instance=news)
@@ -183,10 +185,11 @@ def update_news(request, id):
 
 
 @login_required(login_url='/workspace/login/')
+@own_news
 def delete_news(request, id):
-    news_object = get_object_or_404(News, id=id)
-    news_object.delete()
-    messages.warning(request, f'The news "{news_object.name}" has been deleted successfully.')
+    news = get_object_or_404(News, id=id)
+    news.delete()
+    messages.warning(request, f'The news "{news.name}" has been deleted successfully.')
     return redirect('/workspace/')
 
 # Create your views here.

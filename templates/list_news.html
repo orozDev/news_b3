@@ -19,6 +19,7 @@
                             {% endfor %}
                         </h6>
                         <p class="card-text">{{ item.description }}</p>
+                       <p class="card-text">{{ item.author.get_full_name }}</p>
                         <a href="{% url 'detail_news' id=item.id %}" class="btn btn-primary">View</a>
                     </div>
                 </div>
