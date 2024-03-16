@@ -1,5 +1,7 @@
 from django import forms
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from news.models import Category, News
 
 
@@ -54,3 +56,21 @@ class LoginForm(forms.Form):
         attrs={'class': 'form-control', 'placeholder': 'Имя пользователя'}))
     password = forms.CharField(label='Пароль',
                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}))
+
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = User
+        exclude = (
+            'is_superuser',
+            'is_staff',
+            'is_active',
+            'date_joined',
+            'user_permissions',
+            'groups',
+            'last_login',
+            'password'
+        )
+
+
+# password = forms.CharField(validators=[validate_password])

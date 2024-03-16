@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from workspace.decorators import own_news
 # from workspace.decorators import login_required
 from workspace.filters import NewsFilter
-from workspace.forms import NewsForm, LoginForm
+from workspace.forms import NewsForm, LoginForm, RegisterForm
 
 
 def login_profile(request):
@@ -42,6 +42,22 @@ def login_profile(request):
             message = 'The password is not incorrect or user does not exist.'
 
     return render(request, 'auth/login.html', {'form': form, 'message': message})
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('main'))
+
+    form = RegisterForm()
+    if request.method == 'POST':
+        form = RegisterForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Welcome {user.get_full_name()} to the workspace')
+            return redirect(reverse('workspace'))
+
+    return render(request, 'auth/register.html', {'form': form})
 
 
 @login_required(login_url='/workspace/login/')
