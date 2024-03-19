@@ -1,0 +1,18 @@
+{% extends 'workspace/base.html' %}
+{% load static %}
+
+{% block title %}| Change Profile{% endblock title %}
+
+{% block content %}
+    <h3 class="mb-3">Change Profile of the user "{{ request.user.username }}"</h3>
+    <div>
+        <form action="{% url 'change_profile' %}" method="post">
+            {% csrf_token %}
+            <div>
+                {{ form.as_p }}
+            </div>
+            <button class="btn btn-success w-100 d-block">Save</button>
+        </form>
+    </div>
+
+{% endblock content %}

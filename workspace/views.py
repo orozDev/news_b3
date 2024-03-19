@@ -8,11 +8,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.urls import resolve, reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 
 from workspace.decorators import own_news
 # from workspace.decorators import login_required
 from workspace.filters import NewsFilter
-from workspace.forms import NewsForm, LoginForm, RegisterForm
+from workspace.forms import NewsForm, LoginForm, RegisterForm, ChangeProfileForm, ChangePasswordForm
 
 
 def login_profile(request):
@@ -66,6 +67,43 @@ def logout_profile(request):
     if request.user.is_authenticated:
         logout(request)
     return redirect('/')
+
+
+@login_required(login_url='/workspace/login/')
+def profile(request):
+    return render(request, 'auth/profile.html')
+
+
+@login_required(login_url='/workspace/login/')
+def change_profile(request):
+    form = ChangeProfileForm(instance=request.user)
+
+    if request.method == 'POST':
+        form = ChangeProfileForm(instance=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect(reverse('profile'))
+
+    return render(request, 'auth/change_profile.html', {'form': form})
+
+
+@login_required(login_url='/workspace/login/')
+def change_password(request):
+    form = ChangePasswordForm()
+    if request.method == 'POST':
+        form = ChangePasswordForm(data=request.POST, user=request.user)
+        if form.is_valid():
+            confirm_password = form.cleaned_data['confirm_password']
+            user = request.user
+            user.set_password(confirm_password)
+            # user.password = make_password(confirm_password)
+            user.save()
+            login(request, user)
+            messages.success(request, 'Your password has been changed successfully!')
+            return redirect(reverse('profile'))
+
+    return render(request, 'auth/change_password.html', {'form': form})
 
 
 @login_required(login_url='/workspace/login/')
