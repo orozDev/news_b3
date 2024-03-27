@@ -8,3 +8,5 @@ venv/
 
 migrations
 media/
+
+static/static_root
