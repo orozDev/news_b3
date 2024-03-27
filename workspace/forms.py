@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from news.models import Category, News
 
 
@@ -46,7 +46,7 @@ class NewsForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Заголовок'}),
             'image': forms.FileInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+            'content': CKEditorUploadingWidget(),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'tags': forms.CheckboxSelectMultiple(),
         }

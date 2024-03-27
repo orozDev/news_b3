@@ -1,12 +1,22 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-
+from django import forms
 from news.models import News, Category, Tag, AdditionalInfo
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
 class AdditionalInfoTabularInline(admin.TabularInline):
     model = AdditionalInfo
     extra = 0
+
+
+class NewsAdminForm(forms.ModelForm):
+
+    content = forms.CharField(label='Контент', widget=CKEditorUploadingWidget())
+
+    class Meta:
+        model = News
+        fields = '__all__'
 
 
 @admin.register(News)
@@ -19,6 +29,7 @@ class NewsAdmin(admin.ModelAdmin):
     # filter_vertical = ('tags',)
     filter_horizontal = ('tags',)
     inlines = (AdditionalInfoTabularInline,)
+    form = NewsAdminForm
 
     # raw_id_fields = ('category', 'tags')
 
